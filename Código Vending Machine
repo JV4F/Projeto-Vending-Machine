@@ -1,0 +1,317 @@
+#include <iostream>
+#include <vector>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string>
+
+using namespace std;
+
+  //----------------------------------------------------------------------
+    //Registro do produto
+  //----------------------------------------------------------------------
+    struct produto  {
+
+    int cod_produto;
+    string desc_produto;
+    float valor_produto;
+    int quant_produto;
+
+    produto(int cod_produto_1, string desc_produto_1, double valor_produto_1, int quant_produto_1){
+    cod_produto = cod_produto_1;
+    desc_produto = desc_produto_1;
+    valor_produto = valor_produto_1;
+    quant_produto = quant_produto_1;
+    }
+  };
+
+  //Vetor produto---------------------------------------------------------
+    vector <produto> produtos;
+
+  //Variavel Global-------------------------------------------------------
+    float valor_venda = 0;
+    int quant_compra = 0;
+    int cod_prod = 0;
+    
+
+  //----------------------------------------------------------------------
+    //Declarando Funções
+  //----------------------------------------------------------------------
+    void modoadm (char);
+    void modocliente(char);
+    void reporprodutos(int);
+    void lisarprodutos(int);
+    void exibirfaturamento(int);
+
+  //----------------------------------------------------------------------
+
+int main() {
+
+  //----------------------------------------------------------------------
+    //inicialização da maquina
+  //----------------------------------------------------------------------
+    char modo;
+    int senha;
+  
+    do{
+      cout << "\n-------------------------" << endl;
+      cout << "\n\nInforme o modo que deseja: \n\n(A)Modo Cliente \n(B)Modo Administrador \n(C)Desligar\n\nEscolha: ";
+      cin >> modo;
+
+  //Caso Cliente----------------------------------------------------------
+        switch (modo){
+          case 'A':
+          case 'a':  
+            system("clear");
+            cout << " \n=== Modo Cliente ===\n\n";
+              modocliente(modo);
+              break;
+          
+  //Caso Adm--------------------------------------------------------------
+          case 'B':
+          case 'b':
+            if (modo == 'B' || modo == 'b'){
+              cout << "Insira a senha: ";
+              cin >> senha; 
+            }
+            if (senha != 123){
+                cout << "Senha invalida!!\n";
+                break;
+            }
+            else{  
+                system("clear");  
+                cout << "\n === Modo Administrador ===\n\n";
+                modoadm(modo);
+              }
+
+  //Caso Desligar---------------------------------------------------------
+          case 'C':
+          case 'c':
+            if(modo == 'C' || modo == 'c'){
+              cout << "\nInsira a senha: ";
+              cin >> senha;
+              if(senha == 123){
+                cout << "\nObrigado Por Utilisar a maquina!" << endl;
+                break;
+              }
+            }
+      }    
+    } while(modo != 'C' && modo != 'c');
+}
+
+  //----------------------------------------------------------------------
+    //Listar Produtos
+  //----------------------------------------------------------------------
+    void listarproduto(){
+
+      int i = 0;
+    
+      cout << "\n === Produtos === " << endl;
+      
+  //Condição caso não tenha produtos--------------------------------------
+      if (produtos.size() == 0){  
+        cout << "\nMaquina sem produtos disponiveis!!" << endl;
+        return;  
+      }
+      
+   //Adiciona o produto na lista------------------------------------------ 
+      do{
+           produto &produto = produtos[i];
+        
+        cout << produto.cod_produto << ". " << produto.desc_produto << " ." << produtos[i].quant_produto << "  R$ " << produto.valor_produto << " " << endl; 
+        i++;
+        
+      }while (i < produtos.size());
+    }
+
+  //----------------------------------------------------------------------
+    //Repor Produtos
+  //----------------------------------------------------------------------
+    void reporprodutos(){
+    
+      int cod_prod, i;
+      string desc_prod;
+      float valor_prod;
+      int quant_prod, quant_prod2;
+      char opc, opc2;
+      
+  //Adiciona/Repoe os produtos da maquina----------------------------------
+      do{
+        
+        cout << "\nInforme o código: ";
+        cin >> cod_prod;
+
+        for(i = 0; i < produtos.size(); i++){
+          if(cod_prod == produtos[i].cod_produto){
+            cout << "Codigo ja existe, deseja adicionar mais produtos a esse codigo?: ";
+            cin >> opc2;
+            
+            if(opc2 == 'S' || opc2 == 's'){
+              cout << "Informe a quantidade: ";
+              cin >> quant_prod2;
+              produtos[i].quant_produto += quant_prod2;
+              cout << "Quantidade adicionada!!" << endl;
+              return;;
+            }  
+
+            if(opc2 == 'N' || opc2 == 'n'){
+              return;
+            }
+          }  
+        }
+        
+        cout << "Informe a descrição do produto: ";
+        cin >> desc_prod;
+
+        cout << "Informe o preço: ";
+        cin >> valor_prod;
+
+        cout << "Informe a quantidade: ";
+        cin >> quant_prod;
+        
+  //Adicina os produtos no vetor Produtos---------------------------------------
+        produtos.push_back(produto(cod_prod, desc_prod, valor_prod, quant_prod));
+
+        cout << "\nDeseja adicionar mais produtos?: ";
+        cin >> opc;
+
+      } while(opc == 'S' || opc == 's');
+    }
+
+  //----------------------------------------------------------------------
+    //Faturamento
+  //----------------------------------------------------------------------
+    void exibirfaturamento(){
+     
+      int i = 0;
+      float valor_total = 0;
+      float valorafaturar = 0;
+
+  //Condição caso não tenha produtos---------------------------------------
+      if (produtos.size() == 0){
+          cout << "\nMaquina sem vendas!!" << endl;
+          return;
+        }
+
+  //Soma do valor total a ser faturado-------------------------------------
+      for(i = 0; i < produtos.size(); i++){ 
+        valor_total += (produtos[i].quant_produto * produtos[i].valor_produto);
+      }
+      
+      
+      if (valor_total > 0){
+        cout <<  "\nValor vendido ate o momento: " << valor_venda << "\nValor a faturar: " << valor_total << endl;
+      }  
+    }
+    
+  //----------------------------------------------------------------------
+    //Modo Administrador
+  //----------------------------------------------------------------------
+    void modoadm (char modo){
+
+      int cod;
+
+      do{
+        cout << "\nO que deseja Realizar: \n\n(1)Repor Produtos\n(2)Listar Estoque\n(3)Exibir Faturamento\n(4)Sair\n: ";
+        cin >> cod;
+
+        switch (cod){
+          case 1: 
+          reporprodutos();
+       
+          case 2: 
+          listarproduto();
+       
+          case 3: 
+          if(cod == 3 ){
+          exibirfaturamento();
+          }
+        
+          case 4: 
+            if(cod == 4){
+              cout << "\nSaindo do Modo Administrador!!";
+              return;
+            }
+        }
+      }while(cod != 4);
+    } 
+
+  //----------------------------------------------------------------------
+    //Modo Cliente 
+  //----------------------------------------------------------------------
+    void modocliente (char modo) { 
+      int i;
+      double gasto_final, inserir, troco;
+      bool validacao;
+      char desc;
+      int cod_compra, quant_compra = 0;
+      produto &produtosaida = produtos[i];
+      
+      cout <<"O que deseja comprar?\n" << endl;
+
+      listarproduto();
+
+  //Espaçamento---------------------------------------------------------- 
+      cout << "\n";
+    
+  //Compra do Produto-----------------------------------------------------
+      do{
+
+  //Condição caso não tenha produtos -------------------------------------
+        if (produtos.size() == 0){  
+        return;  
+        }
+      
+        cout << "\nInforme o código do produto que deseja: ";
+        cin >> cod_compra;
+
+        produto &produtosaida = produtos[cod_compra - 1];
+      
+        if (cod_compra <= 0 || cod_compra > produtos.size()){
+          cout << "\nCodigo Invalido!!" << endl;
+          return;
+        }
+        
+        cout << "\nInforme a quantidade que deseja: ";
+        cin >> quant_compra;
+        
+        if(quant_compra <= 0 || quant_compra > produtosaida.quant_produto)
+        {
+          cout << "\nQuantidade Indisponivel!!" << endl;
+          return;
+        }
+  //condição para que desconte o produto retirado pelo usuario-------------
+        if(cod_compra == produtos[i].cod_produto){
+          produtos[i].quant_produto -= quant_compra;
+        }
+
+  //Apresentação da Compra------------------------------------------------
+        gasto_final += (produtosaida.valor_produto * quant_compra);
+        
+        cout << "\nDeseja comprar mais algum protudo?(S|N): ";
+        cin >> desc; 
+        
+      }while(desc == 'S' || desc == 's');
+
+  //Pagamento e troco-----------------------------------------------------
+  
+      if(desc == 'N' || desc == 'n'){
+        cout << "\nValor total a ser pago eh de: R$ " << gasto_final << endl;
+        valor_venda += gasto_final;
+        
+        cout << "\nQual o valor inserido?: ";
+        cin >> inserir;
+      }
+      
+      if(inserir < gasto_final){
+        if(cod_compra == produtos[i].cod_produto){
+          produtos[i].quant_produto += quant_compra;
+        }
+        cout << "\nOperação Invalida!!" << endl;
+      }
+
+      if(inserir >= gasto_final){
+        troco = inserir - gasto_final;
+        cout << "\nTroco: R$ " << troco << "\n\nObrigado pela compra!!" << endl;  
+      }   
+      
+    }
